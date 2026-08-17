@@ -43,6 +43,13 @@ This repository contains **100% accurate source code** corresponding to the prod
 
 ---
 
+### License
+
+This project is open-sourced under the [MIT License](LICENSE). Feel free to modify, inspect, or integrate the native tunneling logic into your own Android networking applications.
+
+---
+
+
 ## Русский
 
 # [Shustree Proxy](https://shustree.ru) для Android
@@ -79,3 +86,10 @@ Shustree Proxy — это сверхлегкий и производительн
 * **Min SDK:** 24 ([Android 7.0 Nougat](https://developer.android.com/about/versions/nougat))
 * **Target SDK:** 36 ([Android 15 / Baklava](https://developer.android.com/about/versions/15))
 * **Асинхронность:** [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) & [Channels](https://kotlinlang.org/docs/channels.html)
+
+---
+
+### Лицензия
+
+Проект распространяется под открытой лицензией [MIT License](LICENSE). Вы можете свободно использовать, модифицировать и интегрировать логику нативного туннелирования в свои собственные сетевые приложения для Android.
+
