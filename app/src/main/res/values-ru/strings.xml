@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">Shustree</string>
+    <string name="status_enabled">включено</string>
+    <string name="status_disabled">выключено</string>
+    <string name="logo_description">Shustree</string>
+    <string name="enabler_description">PROXY</string>
+    <string name="table_balance">Баланс:</string>
+    <string name="table_add_funds">Управление ID</string>
+    <string name="screen_title_subscriptions">Управление аккаунтом</string>
+    <string name="screen_title_privacy">Соглашение и Конфиденциальность</string>
+    <string name="screen_title_blog">Тексты Shustree</string>
+    <string name="screen_content_coming_soon">Содержимое этого раздела скоро появится.</string>
+    <string name="screen_manage_subscriptions_abroad_content">В данное время оплата в Вашей стране не поддерживается.\n\nПожалуйста, пользуйтесь пробным периодом бесплатно.</string>
+    <string name="screen_manage_subscriptions_ru_country_content">Ваш баланс: ___ /n/n/nВы можете активировать оплаченный ID здесь:./n/n/nПополнить баланс можно здесь: shustree.ru (href to https://shustree.ru/manage_subscription?shustree_uid=555)</string>
+    <string name="subscriptions_title">Управление ID</string>
+    <string name="subscriptions_activate_title">Активировать оплаченный ID</string>
+    <string name="subscriptions_activate_field_label">Введите ваш оплаченный ID</string>
+    <string name="subscriptions_activate_button">Активировать</string>
+    <string name="subscriptions_divider_or">ИЛИ</string>
+    <string name="subscriptions_manage_title">Пополнить баланс ID</string>
+    <string name="subscriptions_manage_button">На Shustree.ru</string>
+    <string name="subscriptions_current_balance">Ваш текущий баланс: %1$s</string>
+    <string name="subscriptions_current_balance_loading">Ваш текущий баланс: ....</string>
+    <string name="subscriptions_current_id">Ваш текущий ID: %1$s</string>
+    <string name="subscriptions_current_id_loading">Ваш текущий ID: ....</string>
+    <string name="subscriptions_error_empty_id">Пожалуйста, введите ID</string>
+    <string name="subscriptions_id_not_available">ID еще не доступен</string>
+    <string name="toast_activating">Активация ID…</string>
+    <string name="toast_activation_success">Успешно!</string>
+    <string name="toast_activation_invalid_id">Неверный или неоплаченный ID</string>
+    <string name="toast_activation_network_error">Ошибка сети. Пожалуйста, попробуйте снова.</string>
+    <string name="toast_activation_invalid_format">Неверный формат ID</string>
+    <string name="screen_title_tech_support">Техническая поддержка</string>
+    <string name="support_intro">Проблемы с доступностью сети могут быть вызваны следующими причинами:</string>
+    <string name="support_reason1_title">1. Возможно, при загрузке страницы или приложения происходила перезагрузка нашего прокси-сервера.</string>
+    <string name="support_reason1_solution">В этом случае обновление страницы или перезапуск зависшего приложения решает проблему.</string>
+    <string name="support_reason2_title">2. Возможно, именно в это время на нашем прокси-сервере, к которому Вы подключены, слишком высокая нагрузка.</string>
+    <string name="support_reason2_solution">В этом случае поможет подключение к другому нашему прокси. Просто отключите соединение и подключитесь заново. Прокси серверы обновляются при каждом переподключении.</string>
+    <string name="support_contact_intro">Разумеется, если эти простые меры не решат проблему, пишите в техподдержку, мы обязательно ответим и поможем:</string>
+    <string name="support_contact_email">1@shustree.ru</string>
+    <string name="support_outro_info">Кроме того, имейте в виду, что многие российские приложения и площадки работают быстрее, когда Вы отключаете наши прокси.</string>
+    <string name="support_signature_greeting">С уважением,</string>
+    <string name="support_signature_name">Команда Shustree</string>
+    <string name="toast_insufficient_balance">Пополните баланс.</string>
+    <string name="toast_network_error">Ошибка сети. Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="toast_browser_error">Ошибка открытия браузера.</string>
+    <string name="toast_proxy_server_error">Прокси сервыеры недоступны. Попробуйте позднее.</string>
+
+    <!-- Экран "О приложении" -->
+    <string name="screen_title_about">О приложении</string>
+    <string name="about_intro">Благодарим Вас за установку Shustree!</string>
+    <string name="about_body">В отличие от VPN сервисов, мы работаем легально, открывая доступ только к тем ресурсам, которые не запрещены судебными решениями в России. С Shustree Вы без каких бы то ни было юридических рисков можете пользоваться:</string>
+    <string name="about_outro">и многими другими веб-ресурсами. Помните, что мы не открываем доступ к Instagram, Facebook, LinkedIn и некоторым другим площадкам, официально заблокированным на территориии России.</string>
+    <!-- New string added here -->
+    <string name="about_legal_link_intro">Более подробная юридическая информация —&#160;</string>
+    <string name="about_legal_link_text">здесь</string>
+
+
+    <string name="about_devices">Вы можете активировать оплаченный ID на 4х устройствах, включая браузеры для компьютеров. Для того, чтобы установить браузерное расширение, зайдите на shustree.ru c Вашего ПК или найдите нас в Chrome Web Store.</string>
+    <string name="about_sincerely">С уважением,\nКоманда Shustree</string>
+    <string name="ok_proceed">ПРОДОЛЖИТЬ</string>
+
+    <!-- Экран "Правовая информация" -->
+    <string name="screen_title_legal">Юридическая информация</string>
+    <string name="legal_notice_p1">В России доступ к Instagram, Facebook, LinkedIn и некоторым другим интернет-ресурсам ограничен судебными решениями. В соответствии со ст.273 ч.1 УК РФ \"использование компьютерных программ, заведомо предназначенных для нейтрализации средств защиты компьютерной информации\" наказываются ограничением свободы... Ссылка на статью УК —&#160;</string>
+    <string name="legal_link_article"> здесь</string>
+    <string name="legal_notice_p2">.\n\nБудьте осторожны!\n\nТо есть, несмотря на высказывания политиков и мнения журналистов, использование анонимизаторов, VPN в частности, уголовно наказуемо. Именно по этой статье приговорили пользователя анонимного мессенджера из Томска. Детали —&#160;</string>
+    <string name="legal_link_details"> по ссылке</string>
+    <string name="legal_notice_p3">.\n\nМы заботимся о юридических рисках наших пользователей и именно поэтому не открываем официально запрещенные в РФ ресурсы.\n\nС уважением,\nКоманда Shustree</string>
+
+    <string name="network_error_message">Ошибка сети. Попробуйте позже...</string>
+
+
+</resources>

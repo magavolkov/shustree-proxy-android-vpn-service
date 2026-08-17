@@ -1,0 +1,74 @@
+<resources>
+
+    <string name="app_name">Shustree</string>
+    <string name="status_enabled">connected</string>
+    <string name="status_disabled">disconnected</string>
+    <string name="logo_description">Shustree</string>
+    <string name="enabler_description">PROXY</string>
+    <string name="table_balance">Balance:</string>
+    <string name="table_add_funds">Manage ID</string>
+    <string name="screen_title_subscriptions">Manage Subscriptions</string>
+    <string name="screen_title_privacy">License &amp; Privacy</string>
+    <string name="screen_title_blog">Shustree Dev Blog</string>
+
+    <string name="screen_content_coming_soon">Content for this section is coming soon.</string>
+    <string name="screen_manage_subscriptions_abroad_content">Payments in your country are currently unavailable.\n\nSo please enjoy extended free trial.</string>
+    <string name="screen_manage_subscriptions_ru_country_content">Activate another ID:\n\n\nYou can add funds on our web-site: shustree.ru (href to https://shustree.ru/manage_subscription?shustree_uid=555).</string>
+    <string name="subscriptions_title">Manage ID</string>
+    <string name="subscriptions_activate_title">Activate a Purchased ID</string>
+    <string name="subscriptions_activate_field_label">Enter your paid ID</string>
+    <string name="subscriptions_activate_button">Activate</string>
+    <string name="subscriptions_divider_or">OR</string>
+    <string name="subscriptions_manage_title">Add Funds</string>
+    <string name="subscriptions_manage_button">At Shustree.ru</string>
+    <string name="subscriptions_current_balance">Your current balance: %1$s</string>
+    <string name="subscriptions_current_balance_loading">Your current balance: ...</string>
+    <string name="subscriptions_current_id">Your current App ID: %1$s</string>
+    <string name="subscriptions_current_id_loading">Your current App ID: ...</string>
+    <string name="subscriptions_error_empty_id">Please enter an ID</string>
+    <string name="subscriptions_id_not_available">App ID not available yet</string>
+    <string name="toast_activating">Activating ID…</string>
+    <string name="toast_activation_success">Success!</string>
+    <string name="toast_activation_invalid_id">Invalid or unpaid ID</string>
+    <string name="toast_activation_network_error">Network error. Please try again.</string>
+    <string name="toast_activation_invalid_format">Invalid ID format</string>
+    <string name="screen_title_tech_support">Technical Support</string>
+    <string name="support_intro">Network accessibility issues may be caused by the following reasons:</string>
+    <string name="support_reason1_title">1. Our proxy server may have been rebooting while the page or application was loading.</string>
+    <string name="support_reason1_solution">In this case, refreshing the page or restarting an unresponsive application should solve the problem.</string>
+    <string name="support_reason2_title">2. The specific proxy server you are connected to might be experiencing high load at this moment.</string>
+    <string name="support_reason2_solution">In this case, connecting to another one of our proxies will help. Please try to reconnect. The proxy servers are rotated with each reconnection.</string>
+    <string name="support_contact_intro">Of course, if these simple steps do not solve the problem, please write to our support team, and we will definitely respond and help:</string>
+    <string name="support_contact_email">1@shustree.ru</string>
+    <string name="support_outro_info">Additionally, please keep in mind that many Russian applications and platforms work faster when our proxies are disabled.</string>
+    <string name="support_signature_greeting">Best regards,</string>
+    <string name="support_signature_name">Shustree Team</string>
+    <string name="toast_insufficient_balance">Balance is insufficient.</string>
+    <string name="toast_network_error">Network error. Please check your internet connection and try again.</string>
+    <string name="toast_browser_error">Could not open browser.</string>
+    <string name="toast_proxy_server_error">No servers available to connect.</string>
+
+    <!-- About Screen -->
+    <string name="screen_title_about">About</string>
+    <string name="about_intro">Thank you for installing Shustree!</string>
+    <string name="about_body">Unlike VPN services, we operate legally, providing access only to resources that are legally permitted in Russia. With Shustree, you can use the following resources without any legal risks:</string>
+    <string name="about_outro">and many other internet services. Please note that we do not provide access to Instagram, Facebook, LinkedIn, or some other web resources officially blocked in Russia.</string>
+
+    <!-- New string added here -->
+    <string name="about_legal_link_intro">More detailed legal information is available&#160;</string>
+    <string name="about_legal_link_text">here</string>
+
+    <string name="about_devices">You can activate your paid ID on up to 4 devices, including desktop browsers. To install the browser extension, visit shustree.ru from your PC or find us in the Chrome Web Store.</string>
+    <string name="about_sincerely">Sincerely,\nThe Shustree Team</string>
+    <string name="ok_proceed">GET STARTED</string>
+
+    <string name="screen_title_legal">Legal Information</string>
+    <string name="legal_notice_p1">In Russia, access to Instagram, Facebook, LinkedIn, and some other internet resources is restricted by court decisions. In accordance with Art. 273 Part 1 of the Criminal Code of the Russian Federation, \"the use of computer programs knowingly intended for the neutralization of computer information security measures\" is punishable by restriction of liberty... The link to the Criminal Code article is&#160;</string>
+    <string name="legal_link_article">here</string>
+    <string name="legal_notice_p2">.\n\nBe careful!\n\nThat is, despite the statements of politicians and the opinions of journalists, the use of anonymizers, specifically VPNs, is criminally punishable. It was under this article that a user of an anonymous messenger from Tomsk was sentenced. Details are available&#160;</string>
+    <string name="legal_link_details">this link</string>
+    <string name="legal_notice_p3">.\n\nWe care about the legal risks of our users, and that is why we do not open resources officially restricted in Russia. With our application, you will not be able to access any resource banned in the Russian Federation.\n\nSincerely,\nThe Shustree Team</string>
+
+    <string name="network_error_message">Network error. Please try again later...</string>
+
+</resources>

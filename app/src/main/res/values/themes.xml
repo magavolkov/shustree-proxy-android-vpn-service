@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    Base application theme for a pure Jetpack Compose app.
+    This theme is used for the "splash screen" and the system window background
+    before the Compose UI is drawn.
+    It inherits from a core AppCompat theme, not the older XML Material Components theme.
+    -->
+    <style name="Theme.Shustree" parent="Theme.AppCompat.DayNight.NoActionBar">
+
+        <!-- Optional: You can set system bar colors here if needed -->
+        <item name="android:windowBackground">@color/shustree_dark</item>
+        <!--
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        -->
+    </style>
+</resources>
