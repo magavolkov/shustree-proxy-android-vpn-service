@@ -6,7 +6,7 @@
 
 ## English
 
-# [Shustree Proxy](https://shustree.ru) for Android
+# [Shustree](https://shustree.ru) for Android
 
 Shustree Proxy is an ultra-lightweight, high-performance Android VPN client built with [Kotlin](https://kotlinlang.org/) and [Jetpack Compose](https://developer.android.com/jetpack/compose). Designed with zero third-party tunneling or cryptography dependencies, it delivers native networking performance and absolute data privacy.
 
@@ -37,7 +37,7 @@ This repository contains **100% accurate source code** corresponding to the prod
 
 * **Language:** [Kotlin](https://kotlinlang.org/)
 * **UI Framework:** [Jetpack Compose (Material 3)](https://developer.android.com/jetpack/compose/designsystems/material3)
-* **Min SDK:** 24 ([Android 7.0 Nougat](https://developer.android.com/about/versions/nougat))
+* **Min SDK:** 28 ([Android 9.0 Pie](https://developer.android.com/about/versions/nougat))
 * **Target SDK:** 36 ([Android 15 / Baklava](https://developer.android.com/about/versions/15))
 * **Architecture:** [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) & [Channels](https://kotlinlang.org/docs/channels.html) (Thread-limited IO)
 
@@ -52,7 +52,7 @@ This project is open-sourced under the [MIT License](LICENSE). Feel free to modi
 
 ## Русский
 
-# [Shustree Proxy](https://shustree.ru) для Android
+# [Shustree](https://shustree.ru) для Android
 
 Shustree Proxy — это сверхлегкий и производительный VPN-клиент для Android, разработанный на [Kotlin](https://kotlinlang.org/) и [Jetpack Compose](https://developer.android.com/jetpack/compose). Проект создан без использования сторонних сетевых библиотек и криптографических фреймворков, что обеспечивает максимальную скорость работы нативных средств ОС и абсолютную приватность данных.
 
@@ -83,7 +83,7 @@ Shustree Proxy — это сверхлегкий и производительн
 
 * **Язык:** [Kotlin](https://kotlinlang.org/)
 * **Интерфейс:** [Jetpack Compose (Material 3)](https://developer.android.com/jetpack/compose/designsystems/material3)
-* **Min SDK:** 24 ([Android 7.0 Nougat](https://developer.android.com/about/versions/nougat))
+* **Min SDK:** 28 ([Android 9.0 Pie](https://developer.android.com/about/versions/nougat))
 * **Target SDK:** 36 ([Android 15 / Baklava](https://developer.android.com/about/versions/15))
 * **Асинхронность:** [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) & [Channels](https://kotlinlang.org/docs/channels.html)
 
