@@ -12,7 +12,7 @@ Shustree Proxy is an ultra-lightweight, high-performance Android VPN client buil
 
 This repository contains **100% accurate source code** corresponding to the production [v1.5.0 release on Google Play Store](https://play.google.com/store/apps/details?id=ru.shustree.shustreeproxy).
 
-📖 **Documentation:** [shustree.ru/ru/doumentation](https://shustree.ru/ru/doumentation)
+📖 **Documentation:** [shustree.ru/ru/documentation](https://shustree.ru/ru/documentation)
 
 ---
 
