@@ -10,7 +10,7 @@
 
 Shustree Proxy is an ultra-lightweight, high-performance Android VPN client built with [Kotlin](https://kotlinlang.org/) and [Jetpack Compose](https://developer.android.com/jetpack/compose). Designed with zero third-party tunneling or cryptography dependencies, it delivers native networking performance and absolute data privacy.
 
-This repository contains **100% accurate source code** corresponding to the production [v1.4.3 release on Google Play Store](https://play.google.com/store/apps/details?id=ru.shustree.shustreeproxy).
+This repository contains **100% accurate source code** corresponding to the production [v1.5.0 release on Google Play Store](https://play.google.com/store/apps/details?id=ru.shustree.shustreeproxy).
 
 📖 **Documentation:** [shustree.ru/ru/doumentation](https://shustree.ru/ru/doumentation)
 
@@ -56,7 +56,7 @@ This project is open-sourced under the [MIT License](LICENSE). Feel free to modi
 
 Shustree Proxy — это сверхлегкий и производительный VPN-клиент для Android, разработанный на [Kotlin](https://kotlinlang.org/) и [Jetpack Compose](https://developer.android.com/jetpack/compose). Проект создан без использования сторонних сетевых библиотек и криптографических фреймворков, что обеспечивает максимальную скорость работы нативных средств ОС и абсолютную приватность данных.
 
-Исходный код в этом репозитории на **100% соответствует продакшен-версии 1.4.3**, опубликованной в [Google Play Store](https://play.google.com/store/apps/details?id=ru.shustree.shustreeproxy).
+Исходный код в этом репозитории на **100% соответствует продакшен-версии 1.5.0**, опубликованной в [Google Play Store](https://play.google.com/store/apps/details?id=ru.shustree.shustreeproxy).
 
 📖 **Документация:** [shustree.ru/ru/doumentation](https://shustree.ru/ru/doumentation)
 

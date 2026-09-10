@@ -24,10 +24,9 @@ android {
             dimension = "store"
             applicationId = "ru.shustree.shustreeproxy"
         }
-        create("huawei") {
+        create("rustore") {
             dimension = "store"
             applicationId = "ru.shustree.safeconnection"
-            //applicationId = "ru.shustree.shustreeproxy"
         }
     }
 
