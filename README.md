@@ -1,4 +1,4 @@
-# Shustree Proxy for Android
+# Shustree for Android
 
 [English](#english) | [Русский](#русский)
 
