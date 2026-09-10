@@ -52,11 +52,11 @@
     <string name="about_body">В отличие от VPN сервисов, мы работаем легально, открывая доступ только к тем ресурсам, которые не запрещены судебными решениями в России. С Shustree Вы без каких бы то ни было юридических рисков можете пользоваться:</string>
     <string name="about_outro">и многими другими веб-ресурсами. Помните, что мы не открываем доступ к Instagram, Facebook, LinkedIn и некоторым другим площадкам, официально заблокированным на территориии России.</string>
     <!-- New string added here -->
+
     <string name="about_legal_link_intro">Более подробная юридическая информация —&#160;</string>
     <string name="about_legal_link_text">здесь</string>
 
-
-    <string name="about_devices">Вы можете активировать оплаченный ID на 4х устройствах, включая браузеры для компьютеров. Для того, чтобы установить браузерное расширение, зайдите на shustree.ru c Вашего ПК или найдите нас в Chrome Web Store.</string>
+    <string name="about_devices">Вы можете активировать оплаченный ID на 4-х устройствах, включая браузеры для компьютеров. Для того чтобы установить браузерное расширение, зайдите на shustree.ru c Вашего ПК или найдите нас в Chrome Web Store.</string>
     <string name="about_sincerely">С уважением,\nКоманда Shustree</string>
     <string name="ok_proceed">ПРОДОЛЖИТЬ</string>
 
@@ -67,8 +67,10 @@
     <string name="legal_notice_p2">.\n\nБудьте осторожны!\n\nТо есть, несмотря на высказывания политиков и мнения журналистов, использование анонимизаторов, VPN в частности, уголовно наказуемо. Именно по этой статье приговорили пользователя анонимного мессенджера из Томска. Детали —&#160;</string>
     <string name="legal_link_details"> по ссылке</string>
     <string name="legal_notice_p3">.\n\nМы заботимся о юридических рисках наших пользователей и именно поэтому не открываем официально запрещенные в РФ ресурсы.\n\nС уважением,\nКоманда Shustree</string>
-
     <string name="network_error_message">Ошибка сети. Попробуйте позже...</string>
 
+    <string name="notification_channel_name">Сервис VPN</string>
+    <string name="notification_title">Shustree активирован</string>
+    <string name="notification_text">Ваше соединение защищено.</string>
 
 </resources>

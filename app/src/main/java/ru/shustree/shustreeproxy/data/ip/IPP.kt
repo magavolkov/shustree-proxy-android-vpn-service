@@ -4,16 +4,37 @@ import android.util.Log
 import java.net.InetAddress
 import java.nio.ByteBuffer
 
+import kotlin.collections.get
 
 
+/**
+ * A builder class for creating IP packets.
+ * It is responsible for constructing the IP header, calculating its checksum (for IPv4),
+ * and prepending it to a payload (usually a TCP segment).
+ * 'P' can stand for Producer or Packet.
+ */
 class IPP(
     private val sourceAddress: ByteArray,
     private val destinationAddress: ByteArray,
     private val tcpSegment: ByteBuffer
 ) {
 
+    /**
+     * The Layer 4 payload of this IP packet (e.g., a TCP or UDP segment).
+     * This safely exposes the internal segment buffer.
+     */
     val l4Payload: ByteBuffer
         get() = tcpSegment
+
+    /** The raw bytes of the source IP address. */
+    val sourceAddressBytes: ByteArray
+        get() = sourceAddress
+
+    /** The raw bytes of the destination IP address. */
+    val destinationAddressBytes: ByteArray
+        get() = destinationAddress
+
+
 
     fun build(): ByteBuffer {
         return if (sourceAddress.size == 4) {
@@ -28,6 +49,9 @@ class IPP(
         val ipHeaderSize = 20
         val totalPacketSize = ipHeaderSize + tcpSize
         val packet = ByteBuffer.allocate(totalPacketSize)
+
+
+        // Build the IP header without checksum first
         packet.put((4 shl 4 or 5).toByte())
         packet.put(0) // DSCP/ECN
         packet.putShort(totalPacketSize.toShort())
@@ -36,21 +60,40 @@ class IPP(
         packet.put(64.toByte()) // TTL
         packet.put(Protocol.TCP.number.toByte())
         packet.putShort(0) // Checksum placeholder
+        // Source and Destination IP
         packet.put(sourceAddress)
         packet.put(destinationAddress)
         packet.putShort(10, 0.toShort())
+
+        // Calculate and put IP header checksum
+        // 1. Reset position to calculate checksum over the 20-byte header only.
+        //packet.position(0)
+
+        // 1. Calculate checksum on the header.
         var sum = 0
+        // Use absolute getShort(index) to avoid changing the buffer's position.
         for (i in 0 until ipHeaderSize step 2) {
             sum += packet.getShort(i).toInt() and 0xFFFF
         }
+
+        // 2. Fold sum to 16 bits.
         while (sum shr 16 > 0) {
             sum = (sum and 0xFFFF) + (sum shr 16)
         }
+
+        // 3. Take one's complement.
         val checksum = sum.inv().toShort()
+
+        //Log.e("IPPacket", "checksum: '$checksum' | tcpSize: '$tcpSize' | ipHeaderSize: '$ipHeaderSize' | totalPacketSize: '$totalPacketSize'  | source: '$source' | destination: '$destination'.")
+
+        // 4. Put the correct checksum back into the header at offset 10.
         packet.putShort(10, checksum)
+
+        // Concept: Copy the tcpPacketBuffer data into the space immediately following the IP header.
         packet.position(ipHeaderSize)
         l4Payload.rewind() // Ensure the TCP payload is read from its start.
         packet.put(l4Payload)
+
         packet.flip()
         return packet
     }
@@ -59,12 +102,11 @@ class IPP(
         val ipHeaderSize = 40
         val finalPacket = ByteBuffer.allocate(ipHeaderSize + tcpSegment.remaining())
         val ipHeaderBuffer = ByteBuffer.allocate(ipHeaderSize)
+
+        // Build IPv6 header (no checksum)
         val versionAndTrafficClass = (6 shl 4) or (0 shr 4)
-
         ipHeaderBuffer.put(versionAndTrafficClass.toByte())
-
         val trafficClassAndFlowLabel = ((0 and 0x0F) shl 28) or 0
-
         ipHeaderBuffer.put((trafficClassAndFlowLabel shr 24).toByte())
         ipHeaderBuffer.putShort((trafficClassAndFlowLabel shr 8).toShort())
         ipHeaderBuffer.putShort(tcpSegment.remaining().toShort()) // Payload Length
@@ -74,6 +116,7 @@ class IPP(
         ipHeaderBuffer.put(destinationAddress)
         ipHeaderBuffer.flip()
 
+        // Combine header and TCP segment
         finalPacket.put(ipHeaderBuffer)
         finalPacket.put(tcpSegment)
         finalPacket.flip()
@@ -91,6 +134,10 @@ class IPP(
 
         val portUnmaskMap = portMaskMap.entries.associate { (k, v) -> v to k }
 
+        /**
+         * Creates an IPP builder instance by parsing a raw ByteBuffer.
+         * This is the recommended way to create an IPP from existing packet data.
+         */
         fun fromByteBuffer(fullPacketBuffer: ByteBuffer): IPP? { // Return nullable IPP
             if (fullPacketBuffer.remaining() < 1) {
                 return null // Not enough data to even determine version
@@ -107,9 +154,20 @@ class IPP(
 
                 when (version) {
                     4 -> {
+                        // --- IPv4 Parsing ---
                         if (fullPacketBuffer.remaining() < 20) return null // Not enough for IPv4 header
+
+                        // 1. Calculate IPv4 Header Length (handles IP Options)
                         currentOffset = (fullPacketBuffer.get(0).toInt() and 0x0F) * 4
 
+                        // 2. BLOCK SSH (Port 22)
+                        if (fullPacketBuffer.remaining() >= currentOffset + 4) {
+                            val destPort = fullPacketBuffer.getShort(currentOffset + 2).toInt() and 0xFFFF
+                            if (destPort == 22) {
+                                Log.d("IPP", "surkopavladurovamrazi goryat.")
+                                return null
+                            }
+                        }
 
                         source = ByteArray(4).apply {
                             fullPacketBuffer.position(12)
@@ -126,6 +184,7 @@ class IPP(
                         }
                     }
                     6 -> {
+                        // --- IPv6 Parsing ---
                         if (fullPacketBuffer.remaining() < 40) return null // Not enough for IPv6 header
 
                         source = ByteArray(16).apply {
@@ -156,26 +215,37 @@ class IPP(
                             currentOffset += extHeaderLen
                         }
 
+                        // Ensure we don't exceed buffer limits
                         if (fullPacketBuffer.limit() < currentOffset) return null
 
+                        // Now currentOffset points exactly to the TCP/UDP header
                         fullPacketBuffer.position(currentOffset)
 
+                        val destPort = fullPacketBuffer.getShort(currentOffset + 2).toInt() and 0xFFFF
+                        if (destPort == 22) {
+                            Log.d("IPP", "surkopavladurovamrazi goryat.")
+                            return null
+                        }
                         segment = fullPacketBuffer.slice()
                     }
                     else -> {
+                        // Unsupported IP version
                         return null
                     }
                 }
 
+                // --- 2. Call the primary constructor with the parsed arguments ---
                 return IPP(
                     sourceAddress = source,
                     destinationAddress = destination,
                     tcpSegment = segment
                 )
             } catch (e: Exception) {
+                // On any parsing error, return null
                 return null
             }
             finally {
+                // --- 3. IMPORTANT: Restore the buffer's original state ---
                 fullPacketBuffer.reset()
             }
         }
@@ -198,6 +268,12 @@ class IPP(
             return "$$masked"
         }
 
+        /**
+         * Parses a raw IP packet buffer to generate the standard connection key.
+         * Format: "6:sourceIP:sourcePort-destIP:destPort"
+         * @param buffer The ByteBuffer containing the raw IP packet.
+         * @return The connection key string, or null if parsing fails.
+         */
         fun generateConnectionKey(buffer: ByteBuffer): ConnectionInfo? {
             if (buffer.remaining() < 4) {
                 Log.d("IPP", "garbage caught")
@@ -221,9 +297,13 @@ class IPP(
                     4 -> {
                         if (buffer.limit() < 20) return null // Not enough for a minimal IPv4 header
 
+                        // Protocol is at byte 9
                         protocol = buffer.get(9).toInt() and 0xFF
                         if (protocol != 6 && protocol != 17) return null
 
+                        Log.d("IPP", "IPv4 detected: Protocol=${if(protocol == 6) "TCP" else "UDP"}")
+
+                        // IP Addresses are at bytes 12-15 (source) and 16-19 (destination)
                         val sourceIpBytes = ByteArray(4) { buffer.get(12 + it) }
                         val destIpBytes = ByteArray(4) { buffer.get(16 + it) }
                         sourceIp = InetAddress.getByAddress(sourceIpBytes)
@@ -239,13 +319,17 @@ class IPP(
 
                         sourcePort = buffer.getShort(ipHeaderLength).toInt() and 0xFFFF
                         destPort = buffer.getShort(ipHeaderLength + 2).toInt() and 0xFFFF
+                        //destPort = maskPort(destPort)
 
                     }
                     6 -> {
+                        // IPv6 masking is not implemented, return normal key
                         if (buffer.limit() < 40) return null
 
                         protocol = buffer.get(6).toInt() and 0xFF
                         if (protocol != 6 && protocol != 17) return null
+
+                        Log.d("IPP", "IPv6 detected: Protocol=${if(protocol == 6) "TCP" else "UDP"}")
 
                         val sourceIpBytes = ByteArray(16) { buffer.get(8 + it) }
                         val destIpBytes = ByteArray(16) { buffer.get(24 + it) }
@@ -259,6 +343,7 @@ class IPP(
 
                         sourcePort = buffer.getShort(ipHeaderLength).toInt() and 0xFFFF
                         destPort = buffer.getShort(ipHeaderLength + 2).toInt() and 0xFFFF
+                        //destPort = maskPort(destPort)
                     }
                     else -> {
                         return null
@@ -275,6 +360,7 @@ class IPP(
                     destinationAddress = destIp,
                     destinationPort = destPort,
                     isMasked = isMasked
+                    //maskedDestinationAddress = InetAddress.getByName("94.26.228.105"),
                 )
 
             } catch (e: Exception) {

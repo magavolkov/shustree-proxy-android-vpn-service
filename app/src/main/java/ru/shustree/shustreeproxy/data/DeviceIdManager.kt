@@ -1,6 +1,7 @@
 package ru.shustree.shustreeproxy.data
 
 import android.content.Context
+import android.provider.Settings
 import java.util.UUID
 
 /**
@@ -8,10 +9,6 @@ import java.util.UUID
  * It ensures the ID is created only once and retrieved from SharedPreferences on subsequent launches.
  */
 object DeviceIdManager {
-
-    // Define a constant for the preference file and the key for the ID.
-    private const val PREFS_FILE_NAME = "shustree_app_prefs"
-    private const val KEY_DEVICE_ID = "unique_device_id"
 
     @Volatile
     private var deviceId: String? = null
@@ -22,15 +19,22 @@ object DeviceIdManager {
         return synchronized(this) {
             deviceId?.let { return it }
 
-            val prefs = context.getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE)
-            var id = prefs.getString(KEY_DEVICE_ID, null)
+            val androidId = Settings.Secure.getString(
+                context.contentResolver,
+                Settings.Secure.ANDROID_ID
+            )
 
-            if (id == null) {
-                id = UUID.randomUUID().toString()
-                prefs.edit().putString(KEY_DEVICE_ID, id).apply()
+            // Если ANDROID_ID по какой-то причине пустой или сбойный — используем фоллбэк
+            val finalId = if (!androidId.isNullOrEmpty() && androidId != "9774d56d682e549c") {
+                UUID.nameUUIDFromBytes(androidId.toByteArray(Charsets.UTF_8)).toString()
+            } else {
+                // Если с ANDROID_ID совсем беда — берем системный BUILD fingerprint
+                val fallback = android.os.Build.FINGERPRINT + android.os.Build.SERIAL
+                UUID.nameUUIDFromBytes(fallback.toByteArray(Charsets.UTF_8)).toString()
             }
-            deviceId = id
-            id
+
+            deviceId = finalId
+            finalId
         }
     }
 }

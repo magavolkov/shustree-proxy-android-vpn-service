@@ -24,7 +24,11 @@ class UDPPacket(val buffer: ByteBuffer) {
     }
 }
 
-
+/**
+ * BUILDER for a UDP segment.
+ * It takes high-level data and constructs a raw ByteBuffer for the UDP segment.
+ * This replaces the old static buildPacket method.
+ */
 class UDPP(
     val sourcePort: Int,
     val destinationPort: Int,

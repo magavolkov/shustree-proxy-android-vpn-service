@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="215.9"
+    android:viewportHeight="215.9">
+    <group
+        android:translateX="-41.30964"
+        android:translateY="9.203157">
+        <!-- Задний квадрат с индиго удален, оставлена только геометрия рисунка -->
+        <group
+            android:translateX="-4171.016"
+            android:translateY="8246.496">
+            <group
+                android:rotation="-30"
+                android:scaleY="-1">
+                <path
+                    android:pathData="M7746.002 4826.68H7792.229V4872.907H7746.002Z"
+                    android:fillColor="#FFFFFF" />
+            </group>
+            <group
+                android:rotation="-30"
+                android:scaleY="-1">
+                <path
+                    android:pathData="M7792.229 4872.905H7838.455V4919.132H7792.229Z"
+                    android:fillColor="#FFFFFF" />
+            </group>
+            <group
+                android:rotation="-30"
+                android:scaleY="-1">
+                <path
+                    android:pathData="M7838.457 4919.133H7884.684V4965.36H7838.457Z"
+                    android:fillColor="#FFFFFF" />
+            </group>
+        </group>
+    </group>
+</vector>

@@ -1,11 +1,9 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose) // Correctly applied here for the 'app' module
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23" // Use a version compatible with your Kotlin version
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
-
-
 
 android {
     namespace = "ru.shustree.shustreeproxy"
@@ -13,20 +11,31 @@ android {
 
     defaultConfig {
         applicationId = "ru.shustree.shustreeproxy"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 36
-        versionCode = 63
-        versionName = "1.4.3"
+        versionCode = 67
+        versionName = "1.5.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
-    sourceSets {
-        getByName("main") {
-            java.srcDirs("src/main/java") // CORRECT
+    flavorDimensions += "store"
+    productFlavors {
+        create("play") {
+            dimension = "store"
+            applicationId = "ru.shustree.shustreeproxy"
+        }
+        create("huawei") {
+            dimension = "store"
+            applicationId = "ru.shustree.safeconnection"
+            //applicationId = "ru.shustree.shustreeproxy"
         }
     }
 
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/java")
+        }
+    }
 
     buildTypes {
         release {
@@ -38,30 +47,25 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
-        // This tells the Android Gradle Plugin to enable Compose features
         compose = true
     }
 
     lint {
         abortOnError = false
-        checkReleaseBuilds = false // полезно, если ошибка воспроизводится при собирании release
+        checkReleaseBuilds = false
     }
-
-    // The old composeOptions block is correctly removed.
-    // The new kotlin.compose plugin handles everything automatically.
 }
-
-
 
 dependencies {
     // AndroidX & UI Core
@@ -82,9 +86,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
 
-    // JSON Serialization (нужен для VpnInfoRepository)
-    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
     // Google Services
     implementation("com.google.android.play:integrity:1.6.0")
 
@@ -98,5 +99,5 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
 }
+

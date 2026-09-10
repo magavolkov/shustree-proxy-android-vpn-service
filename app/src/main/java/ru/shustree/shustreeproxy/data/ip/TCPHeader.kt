@@ -3,9 +3,17 @@ package ru.shustree.shustreeproxy.data.ip
 
 import java.nio.ByteBuffer
 
-
+/**
+ * A lightweight, zero-copy PARSER for a raw TCP segment.
+ *
+ * Its sole responsibility is to take a ByteBuffer slice representing a TCP segment
+ * and provide easy access to the header fields without copying data.
+ */
 class TCPHeader(private val buffer: ByteBuffer) {
 
+    // The buffer passed is a slice starting at the TCP header.
+    // We use a duplicate to read from it without affecting the original buffer's position.
+    // We use absolute get() calls for thread safety and to avoid modifying the position.
 
     val sourcePort: Int get() = buffer.getShort(0).toInt() and 0xFFFF
     val destinationPort: Int get() = buffer.getShort(2).toInt() and 0xFFFF

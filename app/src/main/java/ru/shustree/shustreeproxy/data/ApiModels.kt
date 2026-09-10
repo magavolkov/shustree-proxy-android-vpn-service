@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// This file is the single source of truth for these models.
 
 @SuppressLint("UnsafeOptInUsageError")
 @Serializable
@@ -55,7 +56,12 @@ data class ApiResponse(
 )
 
 
-
+/**
+ * Represents the data structure for the API request to activate a paid ID.
+ *
+ * @property deviceId The unique identifier for the device making the request.
+ * @property paidId The paid identifier or code that needs to be activated.
+ */
 @SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class ApiActivationRequest(

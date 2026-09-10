@@ -71,4 +71,9 @@
 
     <string name="network_error_message">Network error. Please try again later...</string>
 
+    <string name="notification_channel_name">VPN Service</string>
+    <string name="notification_title">Shustree Activated</string>
+    <string name="notification_text">Your connection is active.</string>
+
+
 </resources>

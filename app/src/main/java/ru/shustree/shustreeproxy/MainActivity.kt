@@ -1,7 +1,6 @@
 package ru.shustree.shustreeproxy
 
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
@@ -20,9 +19,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -32,17 +29,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.filled.Close
@@ -104,7 +97,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -118,61 +110,81 @@ import ru.shustree.shustreeproxy.ui.theme.StatusConnected
 import ru.shustree.shustreeproxy.ui.theme.StatusDisconnected
 import java.util.Locale
 import androidx.core.view.WindowCompat
-import androidx.compose.foundation.layout.asPaddingValues // <-- ADD THIS
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.copy
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import kotlin.io.path.moveTo
-import kotlin.text.append
-import kotlin.text.firstOrNull
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.unit.dp
 import kotlin.math.cos
 import kotlin.math.sin
+
+
+// Для BlurMaskFilter (native Android)
+import android.graphics.BlurMaskFilter
+
+// Для Compose Canvas / Drawing
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PaintingStyle
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
+
+
 
 
 
 
 class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
+
+
+    //private val isLoading = mutableStateOf(false)
+
+
+    //private val humanizedBalance = mutableStateOf<String?>(null)
+    //private val shuAppId = mutableStateOf<String?>(null)
+    //private val currentIp = mutableStateOf<String?>(null)
+    //val balance = mutableStateOf(0L)
+    //private val isApiParsed by derivedStateOf {
+    //    humanizedBalance.value != null && shuAppId.value != null && currentIp.value != null
+    //}
+
     private var vpnService: ShustreeVpnService? = null
     private var isBound = false
     private val isVpnConnected = mutableStateOf(false)
+    private val activationError = mutableStateOf<String?>(null)
+    private val isActivatingId = mutableStateOf(false)
+
     private lateinit var navController: NavHostController
+
+
+
+    // Add state for the new "isConnecting" status
     private val isConnecting = mutableStateOf(false)
-
-
-
 
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as ShustreeVpnService.LocalBinder
+            val boundService = binder.getService()
             vpnService = binder.getService()
             isBound = true
             Log.i("MainActivity", "Service connected and bound.")
@@ -198,6 +210,7 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
         val wasConnected = this.isVpnConnected.value
         this.isVpnConnected.value = isConnected
         this.isConnecting.value = isConnecting
+        //vpnInfoViewModel.refreshApiData()
         Log.d("MainActivity", "[CALLBACK] Status changed: isConnected=$isConnected, isConnecting=$isConnecting")
     }
 
@@ -224,10 +237,12 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
 
     override fun onResume() {
         super.onResume()
+        // 3. on every screen activation, the api call is made (as requested)
         Log.d("MainActivity", "onResume: Fetching fresh API data.")
 
         vpnInfoViewModel.refreshApiData()
 
+        // Also sync the connection status from the service in case it changed while paused.
         if (isBound) {
             isVpnConnected.value = vpnService?.isVpnRunning() ?: false
         }
@@ -274,6 +289,7 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
 
     // This function is still needed by the vpnPermissionLauncher
 
+
     private val vpnInfoViewModel: VpnInfoViewModel by viewModels()
 
     // --- THIS LAUNCHER IS THE GATEKEEPER ---
@@ -281,6 +297,8 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            // FIX 1: This is the ONLY place a successful permission
+            // grant should trigger the start of the service.
             Log.i("MainActivity", "VPN permission GRANTED. Starting service now.")
             // Извлекаем актуальное состояние из ViewModel
             val state = vpnInfoViewModel.vpnInfoState.value
@@ -296,7 +314,10 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                 Log.e("MainActivity", "Permission granted, but some proxies missing.")
                 Toast.makeText(this, getString(R.string.toast_proxy_server_error), Toast.LENGTH_SHORT).show()
             }
+            //startVpnService()
         } else {
+            // User denied permission or an error occurred.
+            // Ensure the UI reflects the disconnected state.
             Log.w("MainActivity", "VPN permission DENIED or canceled.")
             //isLoading.value = false
             isVpnConnected.value = false
@@ -304,13 +325,16 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
     }
 
 
+    private fun getDeviceCountry(): String {
+        return Locale.getDefault().country
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val sharedPrefs = getSharedPreferences("shustree_prefs", Context.MODE_PRIVATE)
 
@@ -319,6 +343,7 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
             val isFirstLaunch = remember { sharedPrefs.getBoolean("is_first_launch", true) }
             val startDestination = if (isFirstLaunch) "about" else "main"
 
+            // --- NEW: Collect the state from the ViewModel ---
             val vpnInfoState by vpnInfoViewModel.vpnInfoState.collectAsState()
             val isApiDataReady by vpnInfoViewModel.isApiDataReady.collectAsState()
             val activationState by vpnInfoViewModel.activationState.collectAsState()
@@ -333,6 +358,10 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                 }
             }
 
+            // --- NEW: Trigger the data fetch when the Composable first launches ---
+            //LaunchedEffect(key1 = true) {
+            //    vpnInfoViewModel.refreshApiData()
+            //}
 
 
             ShustreeTheme {
@@ -346,6 +375,8 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                         painter = painterResource(id = R.drawable.shustree_background),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
+                        // RULE: Cover 100% of device view
+                        //contentScale = if (isVertical) ContentScale.FillHeight else ContentScale.FillWidth,
                         contentScale = ContentScale.Crop,
                         // RULE: Vertical -> Top-Right | Horizontal -> Top-Left
                         alignment = if (isVertical) {
@@ -356,6 +387,7 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                     )
 
 
+                    // --- State management for Navigation ---
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val scope = rememberCoroutineScope()
                     navController = rememberNavController()
@@ -366,12 +398,14 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                             navController.currentBackStackEntry?.destination?.route
                         }
                     }
+                                    // --- Main App container with the Navigation Drawer (Hamburger Menu) ---
                     ModalNavigationDrawer(
                         drawerState = drawerState,
                         drawerContent = {
                             AppDrawerContent(
                                 currentRoute = currentRoute,
                                 onNavigate = { route ->
+                                    // When a menu item is clicked, navigate and close the drawer.
                                     navController.navigate(route)
                                     scope.launch { drawerState.close() }
                                 }
@@ -391,7 +425,8 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
 
                         ) { innerPadding ->
 
-
+                            // 1. THE PAGE CONTENT (SURFACE + NAVHOST) IS DECLARED FIRST.
+                            // This is the main content plane.
                             Surface(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -399,6 +434,7 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                                 color = Color.Transparent
 
                             ) {
+                                //val userCountry = remember { getUserCountry() }
 
                                 NavHost(
                                     navController = navController,
@@ -477,7 +513,10 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                                                     vpnInfoViewModel.clearActivationError()
                                                 }
                                             )
-
+                                        //} else {
+                                        //    // For all non-Russian users, show the generic subscription screen.
+                                        //    ForeignSubscriptionScreen()
+                                        //}
                                     }
                                     composable("about") { // New route for the About screen
                                         AboutScreen(
@@ -569,6 +608,9 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
 
 
 
+
+    // --- NEW COMPOSABLES FOR NAVIGATION ---
+
     // Data class to represent a menu item
     data class MenuItem(val route: String, val title: String, val icon: ImageVector)
 
@@ -578,32 +620,32 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
         val menuItems = listOf(
             MenuItem(
                 "subscriptions",
-                stringResource(R.string.screen_title_subscriptions), // Use string resource
+                stringResource(R.string.screen_title_subscriptions),
                 Icons.Default.CreditCard
             ),
-            MenuItem( // New "About" item
+            MenuItem(
                 "about",
                 stringResource(R.string.screen_title_about),
-                Icons.AutoMirrored.Filled.HelpOutline // A suitable icon for "About"
+                Icons.AutoMirrored.Filled.HelpOutline
             ),
             MenuItem(
                 "legalNotice",
                 stringResource(R.string.screen_title_legal),
-                Icons.Default.Gavel // Or any legal-themed icon
+                Icons.Default.Gavel
             ),
             MenuItem(
                 "support",
-                stringResource(R.string.screen_title_tech_support),       // Use string resource
+                stringResource(R.string.screen_title_tech_support),
                 Icons.Default.Info
             ),
             MenuItem(
                 "privacy",
-                stringResource(R.string.screen_title_privacy),      // Use string resource
+                stringResource(R.string.screen_title_privacy),
                 Icons.Default.Description
             ),
             MenuItem(
                 "blog",
-                stringResource(R.string.screen_title_blog),      // Use string resource
+                stringResource(R.string.screen_title_blog),
                 Icons.Default.Newspaper
             )
         )
@@ -614,85 +656,83 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
 
         ModalDrawerSheet(
             modifier = Modifier
-                .offset(x = (-1).dp) // <-- ADD THIS LINE
+                .offset(x = (-1).dp)
                 .drawBehind {
                     val strokeWidth = 1.dp.toPx()
                     val borderColor = Color(137, 255, 255)
 
-                    // Draw a line on the right edge of the composable's area
                     drawLine(
                         color = borderColor,
-                        start = Offset(size.width, 0f), // Top-right corner
-                        end = Offset(size.width, size.height), // Bottom-right corner
+                        start = Offset(size.width, 0f),
+                        end = Offset(size.width, size.height),
                         strokeWidth = strokeWidth
                     )
                 },
             drawerContainerColor = Color(26, 46, 71, 230),
-            drawerShape = RectangleShape // 3. Remove rounded corners
+            drawerShape = RectangleShape
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.shustree_key_logo),
-                contentDescription = "Shustree Logo", // For accessibility
+            // Оборачиваем содержимое в Column со скроллом
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = 26.dp, vertical = 26.dp) // Keep the same padding for positioning
-                    .height(26.dp) // Set the explicit height
-            )
-            //Divider()
-            Spacer(Modifier.height(17.dp))
-            menuItems.forEach { item ->
-                NavigationDrawerItem(
-                    icon = { Icon(item.icon, contentDescription = null, tint = iconColor) },
-                    label = { Text(item.title) },
-                    selected = currentRoute == item.route,
-                    onClick = {
-                        val systemLocale = Locale.getDefault().toLanguageTag()
-                        if (item.route == "privacy") {
-                            // Determine the locale and choose the correct URL
-                            val url = if (systemLocale.startsWith("ru")) {
-                                "https://shustree.ru/ru/legal"
-                            } else {
-                                "https://shustree.ru/en/legal"
-                            }
-
-                            // Open the URL in the browser
-                            try {
-                                uriHandler.openUri(url)
-                            } catch (e: Exception) {
-                                Log.e("AppDrawerContent", "Could not open URL: $url", e)
-                                Toast.makeText(context, getString(R.string.toast_browser_error), Toast.LENGTH_SHORT).show()
-                            }
-                        } else if (item.route == "blog") {
-                            // Determine the locale and choose the correct URL
-                            val urlBlog = if (systemLocale.startsWith("ru")) {
-                                "https://shustree.ru/ru/blog"
-                            } else {
-                                "https://shustree.ru/en/blog"
-                            }
-
-                            // Open the URL in the browser
-                            try {
-                                uriHandler.openUri(urlBlog)
-                            } catch (e: Exception) {
-                                Log.e("AppDrawerContent", "Could not open URL: $urlBlog", e)
-                                Toast.makeText(context, getString(R.string.toast_browser_error), Toast.LENGTH_SHORT).show()
-                            }
-
-                        } else {
-                            // For all other items, perform the standard navigation
-                            onNavigate(item.route)
-                        }
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                    // --- ADD THIS 'colors' PARAMETER ---
-                    colors = NavigationDrawerItemDefaults.colors(
-                        // 2. Set the text color for both selected and unselected states
-                        selectedTextColor = Color(187, 225, 255),
-                        unselectedTextColor = Color(187, 199, 255),
-                        // 1. Remove the grey background by making it transparent
-                        selectedContainerColor = Color.Transparent,
-                        unselectedContainerColor = Color.Transparent
-                    )
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.shustree_key_logo),
+                    contentDescription = "Shustree Logo",
+                    modifier = Modifier
+                        .padding(horizontal = 26.dp, vertical = 26.dp)
+                        .height(26.dp)
                 )
+
+                Spacer(Modifier.height(17.dp))
+
+                menuItems.forEach { item ->
+                    NavigationDrawerItem(
+                        icon = { Icon(item.icon, contentDescription = null, tint = iconColor) },
+                        label = { Text(item.title) },
+                        selected = currentRoute == item.route,
+                        onClick = {
+                            val systemLocale = Locale.getDefault().toLanguageTag()
+                            if (item.route == "privacy") {
+                                val url = if (systemLocale.startsWith("ru")) {
+                                    "https://shustree.ru/ru/legal"
+                                } else {
+                                    "https://shustree.ru/en/legal"
+                                }
+
+                                try {
+                                    uriHandler.openUri(url)
+                                } catch (e: Exception) {
+                                    Log.e("AppDrawerContent", "Could not open URL: $url", e)
+                                    Toast.makeText(context, context.getString(R.string.toast_browser_error), Toast.LENGTH_SHORT).show()
+                                }
+                            } else if (item.route == "blog") {
+                                val urlBlog = if (systemLocale.startsWith("ru")) {
+                                    "https://shustree.ru/ru/blog"
+                                } else {
+                                    "https://shustree.ru/en/blog"
+                                }
+
+                                try {
+                                    uriHandler.openUri(urlBlog)
+                                } catch (e: Exception) {
+                                    Log.e("AppDrawerContent", "Could not open URL: $urlBlog", e)
+                                    Toast.makeText(context, context.getString(R.string.toast_browser_error), Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                onNavigate(item.route)
+                            }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedTextColor = Color(187, 225, 255),
+                            unselectedTextColor = Color(187, 199, 255),
+                            selectedContainerColor = Color.Transparent,
+                            unselectedContainerColor = Color.Transparent
+                        )
+                    )
+                }
             }
         }
     }
@@ -805,52 +845,75 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
     @Composable
     fun VpnInfoTable(
         modifier: Modifier = Modifier,
-        startPadding: Dp = 0.dp, // New: Padding for the left column
-        innerPadding: Dp = 0.dp,  // New: Padding between columns
+        startPadding: Dp = 0.dp,
+        innerPadding: Dp = 0.dp,
         balance: String,
         userId: String,
         userIp: String,
         isConnected: Boolean,
         onAddFundsClick: () -> Unit,
     ) {
+        // Кэшируем строковые ресурсы на верхнем уровне Composable
+        val balanceLabel = stringResource(id = R.string.table_balance)
+        val addFundsLabel = stringResource(id = R.string.table_add_funds)
 
         val normalTextColor = Color(187, 199, 255)
         val secondaryTextColor = Color(127, 178, 255)
+        val neonCyan = Color(128, 255, 234)
 
-        val borderColor = if (isConnected) {
-            Color(87, 255, 255)   // Cyan-ish for Connected
-        } else {
-            Color(255, 100, 178)  // Pink-ish for Disconnected
-        }
+        val borderColor = if (isConnected) neonCyan else Color(255, 120, 190)
 
-        // The entire table is a Column. The start padding is applied here.
         Column(
             modifier = modifier
                 .padding(horizontal = 7.dp, vertical = 26.dp)
                 .padding(start = startPadding)
-                // Draw the 1px vertical border on the left
                 .drawBehind {
-                    val strokeWidth = 1.dp.toPx()
-                    drawLine(
+                    val strokeWidthPx = 2.dp.toPx()
+                    val glowRadiusPx = 5.dp.toPx()
+
+                    val dashEffect = PathEffect.dashPathEffect(
+                        floatArrayOf(6.dp.toPx(), 7.dp.toPx()),
+                        0f
+                    )
+
+                    val strokePath = Path().apply {
+                        moveTo(0f, 0f)
+                        lineTo(0f, size.height)
+                    }
+
+                    // 1. Неоновое свечение
+                    drawIntoCanvas { canvas ->
+                        val glowPaint = Paint().apply {
+                            color = borderColor
+                            style = PaintingStyle.Stroke
+                            strokeWidth = strokeWidthPx
+                            pathEffect = dashEffect
+                        }
+                        glowPaint.asFrameworkPaint().apply {
+                            maskFilter = BlurMaskFilter(glowRadiusPx, BlurMaskFilter.Blur.NORMAL)
+                        }
+                        canvas.drawPath(strokePath, glowPaint)
+                    }
+
+                    // 2. Пунктирная линия 2px
+                    drawPath(
+                        path = strokePath,
                         color = borderColor,
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(x = 0f, y = size.height),
-                        strokeWidth = strokeWidth
+                        style = Stroke(
+                            width = strokeWidthPx,
+                            pathEffect = dashEffect
+                        )
                     )
                 }
-                // Add a small gap between the new border and the text
                 .padding(start = 12.dp),
             horizontalAlignment = Alignment.Start
         ) {
             // --- Balance Row ---
             Row {
                 Text(
-                    text = stringResource(id = R.string.table_balance),
+                    text = balanceLabel,
                     color = secondaryTextColor,
-                    // The width is now the dynamic inner padding
-                    modifier = Modifier
-                        .width(innerPadding)
-
+                    modifier = Modifier.width(innerPadding)
                 )
                 Text(
                     text = balance,
@@ -862,51 +925,40 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
             Spacer(Modifier.height(4.dp))
 
             // --- Add Funds Row ---
-
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Spacer uses the same dynamic width
                 Spacer(modifier = Modifier.width(innerPadding + 2.dp))
 
-                val triangleColor = Color(87, 255, 255)
-                Canvas(modifier = Modifier
-                    .size(12.dp)
-                    // CenterVertically puts it in the middle.
-                    // Shifting it down (+2dp) usually lands it exactly on the text baseline.
-                    .offset(y = 0.dp)
-                    .clickable { onAddFundsClick() }
+                Canvas(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clickable { onAddFundsClick() }
                 ) {
                     val path = Path().apply {
-                        moveTo(0f, 0f)                          // Top Left
-                        lineTo(size.width, size.height / 2)    // Right Tip (Middle)
-                        lineTo(0f, size.height)                 // Bottom Left
+                        moveTo(0f, 0f)
+                        lineTo(size.width, size.height / 2)
+                        lineTo(0f, size.height)
                         close()
                     }
-                    drawPath(path = path, color = triangleColor)
+                    drawPath(path = path, color = neonCyan)
                 }
 
                 Spacer(modifier = Modifier.width(6.dp))
 
                 Text(
-                    text = stringResource(id = R.string.table_add_funds),
-                    color = Color(87, 255, 255),
-                    modifier = Modifier.clickable {
-                        onAddFundsClick()
-                    }
+                    text = addFundsLabel,
+                    color = neonCyan,
+                    modifier = Modifier.clickable { onAddFundsClick() }
                 )
             }
 
-
-
-            Spacer(Modifier.height(17.dp)) // A larger gap between sections
+            Spacer(Modifier.height(17.dp))
 
             // --- ID Row ---
             Row {
                 Text(
                     text = "ID:",
                     color = secondaryTextColor,
-                    modifier = Modifier
-                        .width(innerPadding)
-
+                    modifier = Modifier.width(innerPadding)
                 )
                 Text(
                     text = userId,
@@ -921,9 +973,7 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
                 Text(
                     text = "IP:",
                     color = secondaryTextColor,
-                    modifier = Modifier
-                        .width(innerPadding)
-
+                    modifier = Modifier.width(innerPadding)
                 )
                 Text(
                     text = userIp,
@@ -933,109 +983,6 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
             }
         }
     }
-
-
-    @Composable
-    fun VpnInfoGasSkeleton(
-        modifier: Modifier = Modifier,
-        startPadding: Dp = 0.dp
-    ) {
-        // Бесконечная анимация фазы движения газа (0..2PI)
-        val infiniteTransition = rememberInfiniteTransition(label = "GasAnimation")
-
-        val phase by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = (2 * Math.PI).toFloat(),
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 3500, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "phase"
-        )
-
-        // Анимация пульсации прозрачности/яркости
-        val pulseAlpha by infiniteTransition.animateFloat(
-            initialValue = 0.35f,
-            targetValue = 0.85f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 1800, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "pulseAlpha"
-        )
-
-        // Циановые оттенки под ваш интерфейс (с глубокими градиентами)
-        val cyanCore = Color(87, 255, 255, 180)       //#57FFFF (Яркий циановый)
-        val cyanSoft = Color(0, 180, 216, 110)        //#00B4D8 (Глубокий голубой)
-        val cyanGlow = Color(127, 178, 255, 80)       //#7FB2FF (Мягкий фиолетово-голубой)
-        val transparent = Color.Transparent
-
-        Box(
-            modifier = modifier
-                .padding(horizontal = 7.dp, vertical = 26.dp)
-                .padding(start = startPadding)
-                .height(110.dp) // Высота соответствует примерно 4 строкам таблицы
-                .fillMaxWidth()
-                .drawWithCache {
-                    onDrawWithContent {
-                        val w = size.width
-                        val h = size.height
-
-                        // Вычисляем динамическое смещение "газовых облаков" по синусоидам
-                        val offsetX1 = w * 0.3f + (w * 0.2f * sin(phase))
-                        val offsetY1 = h * 0.4f + (h * 0.2f * cos(phase))
-
-                        val offsetX2 = w * 0.7f + (w * 0.25f * cos(phase * 0.8f))
-                        val offsetY2 = h * 0.6f + (h * 0.3f * sin(phase * 0.8f))
-
-                        // 1. Тонкая вертикальная направляющая линия слева (имитирует левый бордюр таблицы)
-                        drawLine(
-                            color = cyanCore.copy(alpha = pulseAlpha * 0.6f),
-                            start = Offset(0f, 0f),
-                            end = Offset(0f, h),
-                            strokeWidth = 1.dp.toPx()
-                        )
-
-                        // 2. Первое сгущение «газа» (Основное яркое ядро)
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                colors = listOf(cyanCore.copy(alpha = pulseAlpha), cyanSoft, transparent),
-                                center = Offset(offsetX1, offsetY1),
-                                radius = w * 0.55f
-                            ),
-                            radius = w * 0.55f,
-                            center = Offset(offsetX1, offsetY1)
-                        )
-
-                        // 3. Второе сгущение «газа» (Мягкий шлейф)
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                colors = listOf(cyanGlow.copy(alpha = pulseAlpha * 0.7f), cyanSoft.copy(alpha = 0.3f), transparent),
-                                center = Offset(offsetX2, offsetY2),
-                                radius = w * 0.65f
-                            ),
-                            radius = w * 0.65f,
-                            center = Offset(offsetX2, offsetY2)
-                        )
-
-                        // 4. Бегущая поверх диагональная газовая волна
-                        val sweepOffset = (phase / (2 * Math.PI).toFloat()) * (w + h)
-                        drawRect(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    transparent,
-                                    cyanCore.copy(alpha = pulseAlpha * 0.3f),
-                                    transparent
-                                ),
-                                start = Offset(sweepOffset - 80f, sweepOffset - 80f),
-                                end = Offset(sweepOffset + 80f, sweepOffset + 80f)
-                            )
-                        )
-                    }
-                }
-        )
-    }
-
 
 
 
@@ -1074,6 +1021,16 @@ class MainActivity : ComponentActivity(), ShustreeVpnService.VpnStatusListener {
             statusTextId = R.string.status_disabled
             statusColor = StatusDisconnected // Use the pink color
         }
+        //val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
+        //val tableAlpha by animateFloatAsState(
+        //    targetValue = if (isApiParsed) 1f else 0f,
+        //    animationSpec = tween(durationMillis = 400), // Adjust duration as needed
+        //    label = "tableAlphaAnimation"
+        //)
+
+        // Инвертированная альфа для скелетона (от 1f до 0f)
+        //val skeletonAlpha = 1f - tableAlpha
 
 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -1389,7 +1346,6 @@ fun AboutScreen(onFinished: ((String?) -> Unit)? = null) { // Change: Added (Str
 
     // A simple list of service names
     val services = listOf(
-        "WhatsApp",
         "YouTube",
         "YouTube Music",
         "Gemini",
@@ -1444,7 +1400,6 @@ fun AboutScreen(onFinished: ((String?) -> Unit)? = null) { // Change: Added (Str
             textAlign = TextAlign.Start,
             lineHeight = 24.sp
         )
-
 
 
         Spacer(modifier = Modifier.height(17.dp))

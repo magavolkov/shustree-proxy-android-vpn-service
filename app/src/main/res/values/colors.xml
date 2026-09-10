@@ -8,4 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="shustree_dark">#011B39</color>
+    <color name="notification_accent">#57FFFF</color> <!-- Используем индиго как акцент подложки -->
+
 </resources>

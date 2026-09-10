@@ -5,6 +5,7 @@ package ru.shustree.shustreeproxy.data
 
 
 
+// Holds all data for the main UI
 data class VpnInfoState(
     val humanizedBalance: String? = null,
     val shuAppId: String? = null,

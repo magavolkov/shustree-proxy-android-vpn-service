@@ -1,7 +1,7 @@
 [versions]
 # Use known stable versions for core build tools and libraries
-agp = "8.4.1"
-kotlin = "2.0.0"
+agp = "8.7.3"
+kotlin = "2.0.21"
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.8.1"
 activityCompose = "1.9.0"
@@ -49,3 +49,4 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

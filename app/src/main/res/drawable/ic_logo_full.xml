@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
+    android:viewportWidth="215.9"
+    android:viewportHeight="215.9"
+    android:width="764.9999dp"
+    android:height="764.9999dp">
+    <group
+        android:translateX="-41.30964"
+        android:translateY="9.203157">
+        <path
+            android:pathData="M41.30964 -9.203157H257.2096V206.6968H41.30964V-9.203157Z"
+            android:fillColor="#010847"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <group
+            android:translateX="-4171.016"
+            android:translateY="8246.496">
+            <group
+                android:rotation="-30"
+                android:scaleY="-1">
+                <path
+                    android:pathData="M7746.002 4826.68H7792.229A0.00000825427 0.00000825427 0 0 1 7792.229 4826.68V4872.907A0.00000825427 0.00000825427 0 0 1 7792.229 4872.907H7746.002A0.00000825427 0.00000825427 0 0 1 7746.002 4872.907V4826.68A0.00000825427 0.00000825427 0 0 1 7746.002 4826.68Z"
+                    android:fillColor="#57FFFF" />
+            </group>
+            <group
+                android:rotation="-30"
+                android:scaleY="-1">
+                <path
+                    android:pathData="M7792.229 4872.905H7838.455A0.00000825427 0.00000825427 0 0 1 7838.455 4872.905V4919.132A0.00000825427 0.00000825427 0 0 1 7838.455 4919.132H7792.229A0.00000825427 0.00000825427 0 0 1 7792.229 4919.132V4872.905A0.00000825427 0.00000825427 0 0 1 7792.229 4872.905Z"
+                    android:fillColor="#57FFFF" />
+            </group>
+            <group
+                android:rotation="-30"
+                android:scaleY="-1">
+                <path
+                    android:pathData="M7838.457 4919.133H7884.684A0.00000825427 0.00000825427 0 0 1 7884.684 4919.133V4965.36A0.00000825427 0.00000825427 0 0 1 7884.684 4965.36H7838.457A0.00000825427 0.00000825427 0 0 1 7838.457 4965.36V4919.133A0.00000825427 0.00000825427 0 0 1 7838.457 4919.133Z"
+                    android:fillColor="#57FFFF" />
+            </group>
+        </group>
+    </group>
+</vector>
+
